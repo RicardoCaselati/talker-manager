@@ -29,12 +29,20 @@ app.get('/talker', async (request, response) => {
 
 app.get('/talker/:id', async (req, res) => {
   const speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
-  const id = req.params.id;
+  const { params: { id } } = req;
   const index = speakers.findIndex((talker) => talker.id === Number(id));
   if (index < 0) {
-    return res.status(404).json({ "message": "Pessoa palestrante não encontrada" });
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
   res.status(200).json(speakers[index]);
+});
+
+app.post('/login', async (req, res) => {
+  const data = { ...req.body };
+  const speakers = JSON.parse(await fs.readFileSync(pathSpeakers, 'utf8'));
+  speakers.push(data);
+  await fs.writwFile(pathSpeakers, JSON.stringify(data));
+  res.end(201).json(data);
 });
 
 app.listen(PORT, () => {
