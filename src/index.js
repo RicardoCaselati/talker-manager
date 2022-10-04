@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(bodyParser.json());
@@ -38,11 +39,10 @@ app.get('/talker/:id', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const data = { ...req.body };
-  const speakers = JSON.parse(await fs.readFileSync(pathSpeakers, 'utf8'));
-  speakers.push(data);
-  await fs.writwFile(pathSpeakers, JSON.stringify(data));
-  res.end(201).json(data);
+  function generateToken() {
+    return crypto.randomBytes(8.5).toString('hex');
+  }
+  res.status(200).json({ token: generateToken() });
 });
 
 app.listen(PORT, () => {
