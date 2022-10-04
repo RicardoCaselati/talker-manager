@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
+const authenticated = require('./middleware/authentication');
 
 const app = express();
 app.use(bodyParser.json());
@@ -38,7 +39,7 @@ app.get('/talker/:id', async (req, res) => {
   res.status(200).json(speakers[index]);
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login', authenticated, async (req, res) => {
   function generateToken() {
     return crypto.randomBytes(8.5).toString('hex');
   }
