@@ -69,7 +69,28 @@ app.post(
     await fs.writeFile(pathSpeakers, JSON.stringify(speakers), 'utf8');
     res.status(201).json(inputedSpeaker);
   },
-  );
+);
+
+app.put(
+  '/talker/:id',
+  tokenAuth,
+  validatePersonalData,
+  validateWatched,
+  inputTalkRate,
+
+  async (req, res) => {
+    const { params: { id } } = req;
+    const speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
+    const index = speakers.findIndex((talker) => talker.id === Number(id));
+    const { name, age, talk } = req.body;
+    speakers[index].name = name;
+    speakers[index].age = age;
+    speakers[index].talk = talk;
+
+    await fs.writeFile(pathSpeakers, JSON.stringify(speakers), 'utf8');
+    res.status(200).json(speakers[index]);
+  },
+);
 
 app.listen(PORT, () => {
   console.log('Online');
