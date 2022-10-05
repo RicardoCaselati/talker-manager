@@ -32,6 +32,17 @@ app.get('/talker', async (request, response) => {
   response.status(200).json(speakers);
 });
 
+app.get('/talker/search', tokenAuth, async (req, res) => {
+  const speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
+  const { q } = req.query;
+  if (!q || q === '') {
+    return res.status(200).json(speakers);
+  }
+  const searchResult = speakers.filter((speaker) => speaker.name.includes(q));
+
+  res.status(200).json(searchResult);
+});
+
 app.get('/talker/:id', async (req, res) => {
   const speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
   const { params: { id } } = req;
@@ -94,7 +105,7 @@ app.put(
 
 app.delete('/talker/:id', tokenAuth, async (req, res) => {
   let speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
-  const { id } = req.params;
+  const { params: { id } } = req;
   const newSpeakers = () => speakers.filter((speaker) => speaker.id !== Number(id));
   speakers = [...newSpeakers()];
   console.log(newSpeakers());
