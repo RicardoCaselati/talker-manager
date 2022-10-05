@@ -92,6 +92,16 @@ app.put(
   },
 );
 
+app.delete('/talker/:id', tokenAuth, async (req, res) => {
+  let speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
+  const { id } = req.params;
+  const newSpeakers = () => speakers.filter((speaker) => speaker.id !== Number(id));
+  speakers = [...newSpeakers()];
+  console.log(newSpeakers());
+  await fs.writeFile(pathSpeakers, JSON.stringify(speakers), 'utf8');
+  res.status(204).json('');
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
