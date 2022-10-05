@@ -4,10 +4,10 @@ const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 const authenticated = require('./middleware/authentication');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(express.json());
+const inputTalkRate = require('./middleware/inputTalkRate');
+const validatePersonalData = require('./middleware/validatePersonalData');
+const validateWatched = require('./middleware/validateWatchedAt');
+const tokenAuth = require('./middleware/tokenAuth');
 
 const pathSpeakers = path.resolve(
   __dirname,
@@ -15,6 +15,9 @@ const pathSpeakers = path.resolve(
   'src',
   'talker.json',
 );
+
+const app = express();
+app.use(bodyParser.json());
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -43,8 +46,30 @@ app.post('/login', authenticated, async (req, res) => {
   function generateToken() {
     return crypto.randomBytes(8.5).toString('hex');
   }
-  res.status(200).json({ token: generateToken() });
+
+  const newToken = generateToken();
+  process.env.TOKEN = newToken;
+
+  res.status(200).json({ token: newToken });
 });
+
+app.post(
+  '/talker',
+  tokenAuth,
+  validatePersonalData,
+  validateWatched,
+  inputTalkRate,
+
+  async (req, res) => {
+    let speakers = JSON.parse(await fs.readFile(pathSpeakers, 'utf8'));
+    const id = speakers.length + 1;
+    const { name, age, talk } = req.body;
+    const inputedSpeaker = { name, age, id, talk };
+    speakers = [...speakers, inputedSpeaker];
+    await fs.writeFile(pathSpeakers, JSON.stringify(speakers), 'utf8');
+    res.status(201).json(inputedSpeaker);
+  },
+  );
 
 app.listen(PORT, () => {
   console.log('Online');
