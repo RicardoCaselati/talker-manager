@@ -28,6 +28,6 @@
 ------------
 
 <div style="display: flex; align-items: center; justify-content: space-between; width: 260px">
-<img src="[https://cdn3.emoji.gg/emojis/3046_MySQL.png](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcodingthesmartway.com%2Fwp-content%2Fuploads%2F2016%2F11%2Flogo_nodejs-400x245.png&f=1&nofb=1&ipt=47e1a7dc7176dcca64baa958d46db7ea2915e10a6d1ea1ac5cb8a81101aa7292&ipo=images)](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/590px-Node.js_logo.svg.png)" width="64px" alt="NodeJS">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/590px-Node.js_logo.svg.png" width="64px" alt="NodeJS">
 </div>
 
